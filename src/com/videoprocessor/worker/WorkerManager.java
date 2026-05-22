@@ -61,9 +61,9 @@ public class WorkerManager {
 
                     Job job = jobQueue.takeJob();
 
-                    metricsTracker.incrementActiveJobs();
-
                     executorService.submit(() -> {
+
+                        metricsTracker.incrementActiveJobs();
 
                         try {
 
