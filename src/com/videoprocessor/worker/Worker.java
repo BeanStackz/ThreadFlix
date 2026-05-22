@@ -8,7 +8,6 @@ import com.videoprocessor.processor.VideoProcessor;
 import com.videoprocessor.retry.RetryHandler;
 import com.videoprocessor.status.JobStatusTracker;
 
-
 public class Worker {
 
     private final MetricsTracker metricsTracker;
@@ -26,11 +25,14 @@ public class Worker {
             FFmpegExecutor executor
     ) {
 
-        this.metricsTracker = metricsTracker;
+        this.metricsTracker =
+                metricsTracker;
 
-        this.statusTracker = statusTracker;
+        this.statusTracker =
+                statusTracker;
 
-        this.retryHandler = retryHandler;
+        this.retryHandler =
+                retryHandler;
 
         this.videoProcessor =
                 new VideoProcessor(executor);
@@ -40,7 +42,8 @@ public class Worker {
             throws InterruptedException {
 
         String threadName =
-                Thread.currentThread().getName();
+                Thread.currentThread()
+                        .getName();
 
         statusTracker.markJobProcessing(
                 job.getJobId()
@@ -82,6 +85,8 @@ public class Worker {
                 statusTracker.markJobFailed(
                         job.getJobId()
                 );
+
+                metricsTracker.incrementFailedJobs();
             }
         }
     }

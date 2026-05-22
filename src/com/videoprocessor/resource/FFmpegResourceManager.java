@@ -1,11 +1,14 @@
 package com.videoprocessor.resource;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FFmpegResourceManager {
 
-    // max concurrent FFmpeg processes
     private final Semaphore semaphore;
+
+    private final AtomicInteger activeProcesses =
+            new AtomicInteger(0);
 
     public FFmpegResourceManager(
             int maxConcurrentProcesses
@@ -22,9 +25,12 @@ public class FFmpegResourceManager {
 
         semaphore.acquire();
 
+        int active =
+                activeProcesses.incrementAndGet();
+
         System.out.println(
-                "[RESOURCE] Permit acquired | Available: "
-                        + semaphore.availablePermits()
+                "[RESOURCE] Permit acquired | Active FFmpeg: "
+                        + active
         );
     }
 
@@ -32,9 +38,17 @@ public class FFmpegResourceManager {
 
         semaphore.release();
 
+        int active =
+                activeProcesses.decrementAndGet();
+
         System.out.println(
-                "[RESOURCE] Permit released | Available: "
-                        + semaphore.availablePermits()
+                "[RESOURCE] Permit released | Active FFmpeg: "
+                        + active
         );
+    }
+
+    public int getActiveProcesses() {
+
+        return activeProcesses.get();
     }
 }

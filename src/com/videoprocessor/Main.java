@@ -9,11 +9,14 @@ import com.videoprocessor.retry.RetryHandler;
 import com.videoprocessor.storage.VideoStorageScanner;
 import com.videoprocessor.processor.FFmpegExecutor;
 import com.videoprocessor.resource.FFmpegResourceManager;
+// Metrics
+import com.videoprocessor.telemetry.MetricsPublisher;
 
 public class Main {
 
     public static void main(String[] args)
             throws Exception {
+
 
         JobQueue jobQueue = new JobQueue();
 
@@ -32,6 +35,15 @@ public class Main {
         FFmpegExecutor ffmpegExecutor =
                 new FFmpegExecutor(resourceManager);
 
+        // Metrics Section
+        MetricsPublisher metricsPublisher =
+                new MetricsPublisher(
+                        metricsTracker,
+                        jobQueue,
+                        resourceManager
+                );
+        // Metrics end
+
         WorkerManager manager =
                 new WorkerManager(
                         metricsTracker,
@@ -40,6 +52,8 @@ public class Main {
                         ffmpegExecutor
                 );
 
+        // Initializing metrics
+        metricsPublisher.start();
         manager.start(jobQueue);
 
         int totalJobs = 50000;
@@ -66,7 +80,22 @@ public class Main {
             jobQueue.submitJob(job);
         }
 
-        Thread.sleep(5000);
+        while (true) {
+
+            boolean queueEmpty =
+                    jobQueue.size() == 0;
+
+            boolean noActiveJobs =
+                    metricsTracker
+                            .getActiveJobs() == 0;
+
+            if (queueEmpty && noActiveJobs) {
+
+                break;
+            }
+
+            Thread.sleep(1000);
+        }
 
         manager.shutdown();
 
