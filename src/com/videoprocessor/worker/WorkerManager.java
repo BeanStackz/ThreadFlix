@@ -2,6 +2,7 @@ package com.videoprocessor.worker;
 
 import com.videoprocessor.job.Job;
 import com.videoprocessor.metrics.MetricsTracker;
+import com.videoprocessor.processor.FFmpegExecutor;
 import com.videoprocessor.queue.JobQueue;
 import com.videoprocessor.retry.RetryHandler;
 import com.videoprocessor.status.JobStatusTracker;
@@ -9,13 +10,14 @@ import com.videoprocessor.status.JobStatusTracker;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import com.videoprocessor.processor.FFmpegExecutor;
 
 public class WorkerManager {
 
     private final ExecutorService executorService;
 
     private final Worker worker;
+
+    private final MetricsTracker metricsTracker;
 
     private Thread dispatcherThread;
 
@@ -27,6 +29,9 @@ public class WorkerManager {
             RetryHandler retryHandler,
             FFmpegExecutor executor
     ) {
+
+        this.metricsTracker =
+                metricsTracker;
 
         this.executorService =
                 Executors.newThreadPerTaskExecutor(
@@ -56,6 +61,8 @@ public class WorkerManager {
 
                     Job job = jobQueue.takeJob();
 
+                    metricsTracker.incrementActiveJobs();
+
                     executorService.submit(() -> {
 
                         try {
@@ -66,6 +73,11 @@ public class WorkerManager {
 
                             Thread.currentThread()
                                     .interrupt();
+
+                        } finally {
+
+                            metricsTracker
+                                    .decrementActiveJobs();
                         }
                     });
 
@@ -75,7 +87,8 @@ public class WorkerManager {
                             "[DISPATCHER] Interrupted"
                     );
 
-                    Thread.currentThread().interrupt();
+                    Thread.currentThread()
+                            .interrupt();
 
                     break;
                 }
@@ -119,5 +132,14 @@ public class WorkerManager {
         System.out.println(
                 "[MANAGER] Shutdown complete"
         );
+    }
+
+    public boolean isIdle(
+            JobQueue jobQueue
+    ) {
+
+        return jobQueue.size() == 0
+                && metricsTracker
+                .getActiveJobs() == 0;
     }
 }

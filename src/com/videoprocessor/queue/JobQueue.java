@@ -13,6 +13,11 @@ public class JobQueue {
         this.queue = new LinkedBlockingQueue<>();
     }
 
+    public int size() {
+
+        return queue.size();
+    }
+
     public void submitJob(Job job) throws InterruptedException {
         queue.put(job);
         System.out.println(

@@ -7,6 +7,12 @@ public class MetricsTracker {
     private final AtomicInteger processedJobs =
             new AtomicInteger(0);
 
+    private final AtomicInteger failedJobs =
+            new AtomicInteger(0);
+
+    private final AtomicInteger activeJobs =
+            new AtomicInteger(0);
+
     public void incrementProcessedJobs() {
 
         int updatedValue =
@@ -18,7 +24,39 @@ public class MetricsTracker {
         );
     }
 
+    public void incrementFailedJobs() {
+
+        int updatedValue =
+                failedJobs.incrementAndGet();
+
+        System.out.println(
+                "[METRICS] Failed Jobs: "
+                        + updatedValue
+        );
+    }
+
     public int getProcessedJobs() {
+
         return processedJobs.get();
+    }
+
+    public int getFailedJobs() {
+
+        return failedJobs.get();
+    }
+
+    public void incrementActiveJobs() {
+
+        activeJobs.incrementAndGet();
+    }
+
+    public void decrementActiveJobs() {
+
+        activeJobs.decrementAndGet();
+    }
+
+    public int getActiveJobs() {
+
+        return activeJobs.get();
     }
 }

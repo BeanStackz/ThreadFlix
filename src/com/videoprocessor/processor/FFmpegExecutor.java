@@ -1,6 +1,6 @@
 //package com.videoprocessor.processor;
 //
-//import com.videoprocessor.resource
+//import com.videoprocessor.com.videoprocessor.resource
 //        .FFmpegResourceManager;
 //
 //import java.io.BufferedReader;
