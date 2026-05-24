@@ -1,18 +1,25 @@
-package com.videoprocessor.monitor;
+package com.videoprocessor.shared;
 
 import java.io.Serializable;
 
 public class MetricsSnapshot
         implements Serializable {
 
-    private final int processedJobs;
+    private static final long serialVersionUID = 1L;
 
-    private final int failedJobs;
+    private int processedJobs;
 
-    private final int queueSize;
+    private int failedJobs;
 
-    private final int activeFFmpegProcesses;
+    private int queueSize;
 
+    private int activeFFmpegProcesses;
+
+    // Required for serialization
+    public MetricsSnapshot() {
+    }
+
+    // Main constructor
     public MetricsSnapshot(
             int processedJobs,
             int failedJobs,
@@ -37,16 +44,49 @@ public class MetricsSnapshot
         return processedJobs;
     }
 
+    public void setProcessedJobs(
+            int processedJobs
+    ) {
+
+        this.processedJobs =
+                processedJobs;
+    }
+
     public int getFailedJobs() {
         return failedJobs;
+    }
+
+    public void setFailedJobs(
+            int failedJobs
+    ) {
+
+        this.failedJobs =
+                failedJobs;
     }
 
     public int getQueueSize() {
         return queueSize;
     }
 
+    public void setQueueSize(
+            int queueSize
+    ) {
+
+        this.queueSize =
+                queueSize;
+    }
+
     public int getActiveFFmpegProcesses() {
+
         return activeFFmpegProcesses;
+    }
+
+    public void setActiveFFmpegProcesses(
+            int activeFFmpegProcesses
+    ) {
+
+        this.activeFFmpegProcesses =
+                activeFFmpegProcesses;
     }
 
     @Override
