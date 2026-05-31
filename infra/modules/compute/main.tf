@@ -71,7 +71,7 @@ resource "azurerm_linux_virtual_machine" "ffmpeg_vm" {
   ]
 
   os_disk {
-    name                 = "${var.vm_name}_OsDisk_1_614e61fd0d0d41478d4866968e038f47"
+    name                 = "${var.vm_name}-osdisk"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
     disk_size_gb         = 64
