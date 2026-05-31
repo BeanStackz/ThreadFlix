@@ -4,7 +4,7 @@ variable "azure_subscription_id" {
 }
 
 variable "resource_group_name" {
-  description = "The name of the pre-existing Resource Group where the VM should be attached."
+  description = "The name of the Resource Group to create for the FFmpeg VM and its networking resources."
   type        = string
 }
 
